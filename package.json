@@ -1,5 +1,5 @@
 {
-  "name": "restful",
+  "name": "restful-fetch",
   "version": "0.0.0",
   "description": "Restful library",
   "main": "index.js",
@@ -22,5 +22,16 @@
     "proxyquire": "^1.7.4",
     "rollup": "^0.25.8",
     "rollup-plugin-babel": "^2.4.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gera2ld/restful-fetch.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gera2ld/restful-fetch/issues"
+  },
+  "homepage": "https://github.com/gera2ld/restful-fetch#readme"
 }
