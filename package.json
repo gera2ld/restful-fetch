@@ -1,0 +1,26 @@
+{
+  "name": "restful",
+  "version": "0.0.0",
+  "description": "Restful library",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c tools/config.js",
+    "test": "mocha test"
+  },
+  "keywords": [
+    "rest",
+    "restful"
+  ],
+  "author": "Gerald <i@gerald.top>",
+  "license": "MIT",
+  "dependencies": {
+    "isomorphic-fetch": "^2.2.1"
+  },
+  "devDependencies": {
+    "babel-preset-es2015-rollup": "^1.1.1",
+    "mocha": "^2.4.5",
+    "proxyquire": "^1.7.4",
+    "rollup": "^0.25.8",
+    "rollup-plugin-babel": "^2.4.0"
+  }
+}
