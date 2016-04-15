@@ -1,5 +1,10 @@
 restful-fetch
 ===
+![NPM](https://img.shields.io/npm/v/restful-fetch.svg)
+![License](https://img.shields.io/npm/l/restful-fetch.svg)
+![Downloads](https://img.shields.io/npm/dt/restful-fetch.svg)
+
+A Restful library based on [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch).
 
 Installation
 ---
