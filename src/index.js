@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import Model from './model';
 
 export default class Restful {
   constructor(options) {
@@ -13,6 +14,17 @@ export default class Restful {
     (options.presets || []).forEach(name => {
       const preset = this['preset' + name.toUpperCase()];
       preset && preset.call(this);
+    });
+    this.rootModel = new Model(this, this.root);
+    [
+      'model',
+      'request',
+      'get',
+      'post',
+      'put',
+      'remove',
+    ].forEach(method => {
+      this[method] = this.rootModel[method].bind(this.rootModel);
     });
   }
 
@@ -51,7 +63,7 @@ export default class Restful {
   prepareRequest(options) {
     const {method, url, params, body, headers} = options;
     const request = {
-      url: url[0] === '/' ? this.root + url : url,
+      url,
       method,
       headers: Object.assign({}, this.headers, headers),
       body,
@@ -62,7 +74,7 @@ export default class Restful {
     }, request);
   }
 
-  request(options) {
+  _request(options) {
     const request = this.prepareRequest(options);
     const init = ['method', 'headers', 'body']
     .reduce((init, key) => {
@@ -75,31 +87,6 @@ export default class Restful {
       return this.posthandlers.reduce((res, handler) => handler(res), res);
     }, res => {
       return this.errhandlers.reduce((res, handler) => handler(res), res);
-    });
-  }
-
-  get(url, params) {
-    return this.request({url, params});
-  }
-
-  post(url, body, params) {
-    return this.request({
-      method: 'POST',
-      url, params, body,
-    });
-  }
-
-  put(url, body, params) {
-    return this.request({
-      method: 'PUT',
-      url, params, body,
-    });
-  }
-
-  remove(url, params) {
-    return this.request({
-      method: 'DELETE',
-      url, params,
     });
   }
 }

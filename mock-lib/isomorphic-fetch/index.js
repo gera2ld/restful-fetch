@@ -1,5 +1,5 @@
 function response(url, init) {
-  const responseLine = `${init.method} ${url}`;
+  const responseLine = `${init.method} ${url || '/'}`;
   return {
     status: 200,
     text: () => Promise.resolve(responseLine),
