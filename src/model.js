@@ -7,17 +7,19 @@ export default class Model {
   }
 
   request(options) {
-    options = this.prehandlers.reduce((options, handler) => {
-      return Object.assign({}, options, handler(options));
-    }, options);
-    var url = options.url || '';
-    // Skip absolute paths
-    if (!/^[\w-]+:/.test(url)) {
-      if (url && url[0] !== '/') url = '/' + url;
-      options.url = this.path + url;
-    }
-    return this.restful._request(options)
-    .then(res => this.posthandlers.reduce((res, handler) => handler(res), res));
+    return this.restful.processHandlers(
+      this.prehandlers, options,
+      (options, handler) => Object.assign({}, options, handler(options))
+    ).then(options => {
+      var url = options.url || '';
+      // Skip absolute paths
+      if (!/^[\w-]+:/.test(url)) {
+        if (url && url[0] !== '/') url = '/' + url;
+        options.url = this.path + url;
+      }
+      return this.restful._request(options)
+    })
+    .then(res => this.restful.processHandlers(this.posthandlers, res));
   }
 
   get(url, params) {

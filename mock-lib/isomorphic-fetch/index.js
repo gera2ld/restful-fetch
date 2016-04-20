@@ -1,11 +1,13 @@
 function response(url, init) {
   const responseLine = `${init.method} ${url || '/'}`;
+  const data = init.body && JSON.parse(init.body);
+  const status = data && data.status || 200;
   return {
-    status: 200,
+    status,
     text: () => Promise.resolve(responseLine),
     json: () => Promise.resolve({
       responseLine,
-      data: init.body && JSON.parse(init.body),
+      data,
     }),
   };
 }

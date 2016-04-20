@@ -89,14 +89,25 @@ describe('Restful', () => {
     });
 
     it('should intercept after request', () => {
-      rest.posthandlers.push(res => res.then(options => {
+      rest.posthandlers.push(options => {
         options.data = 'intercepted';
         return options;
-      }));
+      });
       return rest.get('hello')
       .then(data => {
         assert.equal(data.responseLine, 'GET /hello');
         assert.equal(data.data, 'intercepted');
+      });
+    });
+
+    it('should parse errors', () => {
+      return rest.post('error', {
+        status: 404,
+      }).then(data => {
+        assert.ok(false);
+      }, err => {
+        assert.equal(err.status, 404);
+        assert.equal(err.data.responseLine, 'POST /error');
       });
     });
   });

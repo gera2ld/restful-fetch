@@ -7,7 +7,10 @@ export default class Restful {
     this.root = options.root || '';
     this.headers = Object.assign({}, options.headers);
     this.prehandlers = [];
-    this.posthandlers = [];
+    this.posthandlers = [res => {
+      if (res.status > 300) throw res;
+      return res;
+    }];
     this.errhandlers = [
       res => {throw res},
     ];
@@ -37,12 +40,10 @@ export default class Restful {
       body: request.body ? JSON.stringify(request.body) : null,
     }));
     this.posthandlers.push(res => res.status === 204 ? null : res.json());
-    this.errhandlers.unshift(res => {
-      return res.json().then(data => ({
-        status: res.status,
-        data,
-      }));
-    });
+    this.errhandlers.unshift(res => res.json().then(data => ({
+      status: res.status,
+      data,
+    })));
   }
 
   setHeader(key, val) {
@@ -66,6 +67,14 @@ export default class Restful {
     return qs ? '?' + qs : '';
   }
 
+  processHandlers(handlers, value, cb) {
+    if (!cb) cb = (value, handler) => handler(value);
+    return handlers.reduce(
+      (promise, handler) => promise.then(value => cb(value, handler)),
+      Promise.resolve(value)
+    );
+  }
+
   prepareRequest(options) {
     const {method, url, params, body, headers} = options;
     const request = {
@@ -75,23 +84,24 @@ export default class Restful {
       body,
     };
     if (params) request.url += this.toQueryString(params);
-    return this.prehandlers.reduce(
+    return this.processHandlers(
+      this.prehandlers, request,
       (request, handler) => Object.assign({}, request, handler(request))
-    , request);
+    );
   }
 
   _request(options) {
-    const request = this.prepareRequest(options);
-    const init = ['method', 'headers', 'body']
-    .reduce((init, key) => {
-      const val = request[key];
-      if (val != null) init[key] = val;
-      return init;
-    }, {});
-    return fetch(request.url, init)
-    .then(
-      res => this.posthandlers.reduce((res, handler) => handler(res), res),
-      res => this.errhandlers.reduce((res, handler) => handler(res), res)
-    );
+    return this.prepareRequest(options)
+    .then(request => {
+      const init = ['method', 'headers', 'body']
+      .reduce((init, key) => {
+        const val = request[key];
+        if (val != null) init[key] = val;
+        return init;
+      }, {});
+      return fetch(request.url, init)
+    })
+    .then(res => this.processHandlers(this.posthandlers, res))
+    .catch(res => this.processHandlers(this.errhandlers, res));
   }
 }
