@@ -15,11 +15,12 @@ beforeEach(() => {
 describe('Restful', () => {
   describe('Request', () => {
     it('GET', () => {
-      return rest.get('/hello')
+      return rest.get('hello')
       .then(data => {
         assert.equal(data.responseLine, 'GET /hello');
       });
     });
+
     it('GET empty path', () => {
       return rest.get()
       .then(data => {
@@ -27,8 +28,15 @@ describe('Restful', () => {
       });
     });
 
+    it('GET absolute path', () => {
+      return rest.get('http://www.google.com/')
+      .then(data => {
+        assert.equal(data.responseLine, 'GET http://www.google.com/');
+      });
+    });
+
     it('POST', () => {
-      return rest.post('/hello', {
+      return rest.post('hello', {
         foo: 'bar',
       })
       .then(data => {
@@ -38,7 +46,7 @@ describe('Restful', () => {
     });
 
     it('PUT', () => {
-      return rest.put('/hello', {
+      return rest.put('hello', {
         foo: 'bar',
       })
       .then(data => {
@@ -48,7 +56,7 @@ describe('Restful', () => {
     });
 
     it('DELETE', () => {
-      return rest.remove('/hello')
+      return rest.remove('hello')
       .then(data => {
         assert.equal(data.responseLine, 'DELETE /hello');
         assert.equal(data.data, null);
@@ -74,7 +82,7 @@ describe('Restful', () => {
       rest.prehandlers.push(options => ({
         url: options.url + '/intercepted',
       }));
-      return rest.get('/hello')
+      return rest.get('hello')
       .then(data => {
         assert.equal(data.responseLine, 'GET /hello/intercepted');
       });
@@ -85,7 +93,7 @@ describe('Restful', () => {
         options.data = 'intercepted';
         return options;
       }));
-      return rest.get('/hello')
+      return rest.get('hello')
       .then(data => {
         assert.equal(data.responseLine, 'GET /hello');
         assert.equal(data.data, 'intercepted');
@@ -109,7 +117,7 @@ describe('Model', () => {
     });
 
     it('POST', () => {
-      return model.post('/hello', {
+      return model.post('hello', {
         foo: 'bar',
       })
       .then(data => {
@@ -119,7 +127,7 @@ describe('Model', () => {
     });
 
     it('PUT', () => {
-      return model.put('/hello', {
+      return model.put('hello', {
         foo: 'bar',
       })
       .then(data => {
@@ -129,7 +137,7 @@ describe('Model', () => {
     });
 
     it('DELETE', () => {
-      return model.remove('/hello')
+      return model.remove('hello')
       .then(data => {
         assert.equal(data.responseLine, 'DELETE /res/1/hello');
         assert.equal(data.data, null);
@@ -161,7 +169,7 @@ describe('Model', () => {
           intercepted: 1
         },
       }));
-      return model.get('/hello')
+      return model.get('hello')
       .then(data => {
         assert.equal(data.responseLine, 'GET /res/1/hello?intercepted=1');
       });
@@ -172,7 +180,7 @@ describe('Model', () => {
         options.data = 'intercepted';
         return options;
       });
-      return model.get('/hello')
+      return model.get('hello')
       .then(data => {
         assert.equal(data.responseLine, 'GET /res/1/hello');
         assert.equal(data.data, 'intercepted');

@@ -10,8 +10,12 @@ export default class Model {
     options = this.prehandlers.reduce((options, handler) => {
       return Object.assign({}, options, handler(options));
     }, options);
-    const url = options.url || '';
-    if (!url || url[0] === '/') options.url = this.path + url;
+    var url = options.url || '';
+    // Skip absolute paths
+    if (!/^[\w-]+:/.test(url)) {
+      if (url && url[0] !== '/') url = '/' + url;
+      options.url = this.path + url;
+    }
     return this.restful._request(options)
     .then(res => this.posthandlers.reduce((res, handler) => handler(res), res));
   }
