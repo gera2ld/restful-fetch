@@ -37,6 +37,12 @@ export default class Restful {
       body: request.body ? JSON.stringify(request.body) : null,
     }));
     this.posthandlers.push(res => res.status === 204 ? null : res.json());
+    this.errhandlers.unshift(res => {
+      return res.json().then(data => ({
+        status: res.status,
+        data,
+      }));
+    });
   }
 
   setHeader(key, val) {
