@@ -4,8 +4,12 @@ const fetch = require('../mock-lib/isomorphic-fetch');
 
 const Restful = proxyquire('../dist', {'isomorphic-fetch': fetch});
 
-const rest = new Restful({
-  presets: ['json'],
+var rest;
+
+beforeEach(() => {
+  rest = new Restful({
+    presets: ['json'],
+  });
 });
 
 describe('Restful', () => {
@@ -64,10 +68,38 @@ describe('Restful', () => {
       });
     });
   });
+
+  describe('Interceptors', () => {
+    it('should intercept before request', () => {
+      rest.prehandlers.push(options => ({
+        url: options.url + '/intercepted',
+      }));
+      return rest.get('/hello')
+      .then(data => {
+        assert.equal(data.responseLine, 'GET /hello/intercepted');
+      });
+    });
+
+    it('should intercept after request', () => {
+      rest.posthandlers.push(res => res.then(options => {
+        options.data = 'intercepted';
+        return options;
+      }));
+      return rest.get('/hello')
+      .then(data => {
+        assert.equal(data.responseLine, 'GET /hello');
+        assert.equal(data.data, 'intercepted');
+      });
+    });
+  });
 });
 
 describe('Model', () => {
-  const model = rest.model('/res/1');
+  var model;
+
+  beforeEach(() => {
+    model = rest.model('/res/1');
+  });
 
   describe('Request', () => {
     it('GET', () => {
@@ -118,6 +150,32 @@ describe('Model', () => {
       const submodel = model.model('child/2');
       return submodel.get().then(data => {
         assert.equal(data.responseLine, 'GET /res/1/child/2');
+      });
+    });
+  });
+
+  describe('Interceptors', () => {
+    it('should intercept before request', () => {
+      model.prehandlers.push(options => ({
+        params: {
+          intercepted: 1
+        },
+      }));
+      return model.get('/hello')
+      .then(data => {
+        assert.equal(data.responseLine, 'GET /res/1/hello?intercepted=1');
+      });
+    });
+
+    it('should intercept after request', () => {
+      model.posthandlers.push(options => {
+        options.data = 'intercepted';
+        return options;
+      });
+      return model.get('/hello')
+      .then(data => {
+        assert.equal(data.responseLine, 'GET /res/1/hello');
+        assert.equal(data.data, 'intercepted');
       });
     });
   });
