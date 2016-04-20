@@ -69,9 +69,9 @@ export default class Restful {
       body,
     };
     if (params) request.url += this.toQueryString(params);
-    return this.prehandlers.reduce((request, handler) => {
-      return Object.assign({}, request, handler(request));
-    }, request);
+    return this.prehandlers.reduce(
+      (request, handler) => Object.assign({}, request, handler(request))
+    , request);
   }
 
   _request(options) {
@@ -83,10 +83,9 @@ export default class Restful {
       return init;
     }, {});
     return fetch(request.url, init)
-    .then(res => {
-      return this.posthandlers.reduce((res, handler) => handler(res), res);
-    }, res => {
-      return this.errhandlers.reduce((res, handler) => handler(res), res);
-    });
+    .then(
+      res => this.posthandlers.reduce((res, handler) => handler(res), res),
+      res => this.errhandlers.reduce((res, handler) => handler(res), res)
+    );
   }
 }

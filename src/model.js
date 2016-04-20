@@ -2,16 +2,25 @@ export default class Model {
   constructor(restful, path) {
     this.restful = restful;
     this.path = path || '';
+    this.prehandlers = [];
+    this.posthandlers = [];
   }
 
   request(options) {
+    options = this.prehandlers.reduce((options, handler) => {
+      return Object.assign({}, options, handler(options));
+    }, options);
     const url = options.url || '';
     if (!url || url[0] === '/') options.url = this.path + url;
-    return this.restful._request(options);
+    return this.restful._request(options)
+    .then(res => this.posthandlers.reduce((res, handler) => handler(res), res));
   }
 
   get(url, params) {
-    return this.request({url, params});
+    return this.request({
+      method: 'GET',
+      url, params,
+    });
   }
 
   post(url, body, params) {
