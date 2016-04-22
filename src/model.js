@@ -4,6 +4,7 @@ export default class Model {
     this.path = path || '';
     this.prehandlers = [];
     this.posthandlers = [];
+    this.overrides = {};
   }
 
   request(options) {
@@ -17,7 +18,7 @@ export default class Model {
         if (url && url[0] !== '/') url = '/' + url;
         options.url = this.path + url;
       }
-      return this.restful._request(options)
+      return this.restful._request(options, this.overrides);
     })
     .then(res => this.restful.processHandlers(this.posthandlers, res));
   }

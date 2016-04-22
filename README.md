@@ -63,3 +63,13 @@ model.posthandlers.push(data => {
   return data || 'empty';
 });
 ```
+
+### Overrides
+```js
+const restful = new Restful({presets: ['json']});
+
+const someText = restful.model('/sometext');
+// override global posthandlers to avoid JSON parsing
+someText.overrides.posthandlers = [];
+someText.get().then(text => console.log(text));
+```

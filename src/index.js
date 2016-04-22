@@ -75,7 +75,7 @@ export default class Restful {
     );
   }
 
-  prepareRequest(options) {
+  prepareRequest(options, overrides) {
     const {method, url, params, body, headers} = options;
     const request = {
       url,
@@ -85,13 +85,13 @@ export default class Restful {
     };
     if (params) request.url += this.toQueryString(params);
     return this.processHandlers(
-      this.prehandlers, request,
+      overrides.prehandlers || this.prehandlers, request,
       (request, handler) => Object.assign({}, request, handler(request))
     );
   }
 
-  _request(options) {
-    return this.prepareRequest(options)
+  _request(options, overrides) {
+    return this.prepareRequest(options, overrides)
     .then(request => {
       const init = ['method', 'headers', 'body']
       .reduce((init, key) => {
@@ -101,7 +101,7 @@ export default class Restful {
       }, {});
       return fetch(request.url, init)
     })
-    .then(res => this.processHandlers(this.posthandlers, res))
-    .catch(res => this.processHandlers(this.errhandlers, res));
+    .then(res => this.processHandlers(overrides.posthandlers || this.posthandlers, res))
+    .catch(res => this.processHandlers(overrides.errhandlers || this.errhandlers, res));
   }
 }
