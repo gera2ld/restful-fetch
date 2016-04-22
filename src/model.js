@@ -50,12 +50,10 @@ export default class Model {
     });
   }
 
-  model(path) {
-    path = (path || '').replace(/\/$/, '');
-    if (!path) {
-      throw new Error('Invalid path: path cannot be empty!');
-    }
-    if (path[0] !== '/') path = '/' + path;
+  model(...paths) {
+    var path = paths.map(path => path.replace(/^\/|\/$/g, ''))
+    .filter(path => path).join('/');
+    if (path) path = '/' + path;
     return new Model(this.restful, this.path + path);
   }
 }

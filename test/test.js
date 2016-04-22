@@ -65,15 +65,13 @@ describe('Restful', () => {
   });
 
   describe('Model', () => {
-    it('should have path', () => {
+    it('may have empty path', () => {
       ['', '/'].forEach(function (path) {
-        try {
-          const model = rest.model(path);
-          assert.ok(false);
-        } catch (err) {
-          assert.ok(err.message.startsWith('Invalid path:'));
-        }
+        assert.equal(rest.model(path).path, '');
       });
+    });
+    it('may provide path pieces', () => {
+      assert.equal(rest.model('a', 'b', 'c').path, '/a/b/c');
     });
   });
 
@@ -157,15 +155,10 @@ describe('Model', () => {
   });
 
   describe('Submodel', () => {
-    it('should have path', () => {
-      try {
-        const submodel = model.model();
-        assert.ok(false);
-      } catch (err) {
-        assert.ok(err.message.startsWith('Invalid path:'));
-      }
+    it('may have empty path', () => {
+      assert.equal(model.model().path, model.path);
     });
-    it('should prepend path', () => {
+    it('should append path', () => {
       const submodel = model.model('child/2');
       return submodel.get().then(data => {
         assert.equal(data.responseLine, 'GET /res/1/child/2');
