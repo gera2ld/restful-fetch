@@ -52,7 +52,7 @@ export default class Model {
   }
 
   model(...paths) {
-    var path = paths.map(path => path.replace(/^\/|\/$/g, ''))
+    var path = paths.map(path => (path || '').replace(/^\/|\/$/g, ''))
     .filter(path => path).join('/');
     if (path) path = '/' + path;
     return new Model(this.restful, this.path + path);
