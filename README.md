@@ -30,6 +30,11 @@ restful.get('/foo').then(data => console.log(data));
 const restful = new Restful({presets: ['json']});
 
 const myCar = restful.model('/cars/1');
+// or
+const myCar = restful.model('cars/1');
+// or
+const myCar = restful.model('cars', 1);
+
 myCar.get().then(data => console.log(data));
 
 const mySeat = myCar.model('/seat/2');
@@ -62,4 +67,30 @@ model.prehandlers.push(options => {
 model.posthandlers.push(data => {
   return data || 'empty';
 });
+```
+
+### Placeholders
+``` js
+const restful = new Restful({presets: ['json']});
+
+const car = restful.model('cars', ':id');
+car.posthandlers.push(() => {
+  console.log('Get a car');
+});
+
+const myCar = car.fill({id: 1});
+myCar.get().then(data => console.log(data));
+
+const yourCar = car.fill({id: 2});
+yourCar.get().then(data => console.log(data));
+```
+
+### Overrides
+```js
+const restful = new Restful({presets: ['json']});
+
+const someText = restful.model('/sometext');
+// override global posthandlers to avoid JSON parsing
+someText.overrides.posthandlers = [];
+someText.get().then(text => console.log(text));
 ```
