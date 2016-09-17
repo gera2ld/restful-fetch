@@ -1,12 +1,13 @@
 const RE_SLASHES = /^\/|\/$/g;
 const RE_ABSURL = /^[\w-]+:/;
+const RE_PLACEHOLDER = /\/:([^/]*)/g;
 
 export default class Model {
   constructor(restful, path) {
     this.restful = restful;
     this.prehandlers = [];
     this.posthandlers = [];
-    this.overrides = {};
+    this.overrides = null;
     this.parameters = null;
     this._setPath(path);
   }
@@ -93,7 +94,7 @@ export default class Model {
   }
 
   fill(data) {
-    const path = this.path.replace(/\/:([^/]*)/g, (match, key) => {
+    const path = this.path.replace(RE_PLACEHOLDER, (match, key) => {
       const value = data[key];
       return value ? '/' + value : match;
     });

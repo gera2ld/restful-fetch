@@ -85,7 +85,7 @@ export default class Restful {
     };
     if (params) request.url += this.toQueryString(params);
     return this._processHandlers(
-      overrides.prehandlers || this.prehandlers, request,
+      overrides && overrides.prehandlers || this.prehandlers, request,
       (request, handler) => Object.assign({}, request, handler(request))
     );
   }
@@ -101,7 +101,7 @@ export default class Restful {
       }, {});
       return fetch(request.url, init)
     })
-    .then(res => this._processHandlers(overrides.posthandlers || this.posthandlers, res))
-    .catch(res => this._processHandlers(overrides.errhandlers || this.errhandlers, res));
+    .then(res => this._processHandlers(overrides && overrides.posthandlers || this.posthandlers, res))
+    .catch(res => this._processHandlers(overrides && overrides.errhandlers || this.errhandlers, res));
   }
 }
