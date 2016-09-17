@@ -4,5 +4,7 @@ export default {
   entry: 'src/index.js',
   dest: 'dist/index.js',
   format: 'cjs',
-  plugins: [babel()],
+  plugins: [babel({
+    exclude: 'node_modules/**',
+  })],
 }

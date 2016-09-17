@@ -70,6 +70,7 @@ describe('Restful', () => {
         assert.equal(rest.model(path).path, '');
       });
     });
+
     it('may provide path pieces', () => {
       assert.equal(rest.model('a', 'b', 'c').path, '/a/b/c');
     });
@@ -155,10 +156,14 @@ describe('Model', () => {
   });
 
   describe('Submodel', () => {
-    it('may have empty path', () => {
-      assert.equal(model.model().path, model.path);
+    it('should allow empty path', () => {
+      ['', '/'].forEach(function (path) {
+        const child = model.model(path);
+        assert.equal(model.path, child.path);
+      });
     });
-    it('should append path', () => {
+
+    it('should prepend path', () => {
       const submodel = model.model('child/2');
       return submodel.get().then(data => {
         assert.equal(data.responseLine, 'GET /res/1/child/2');
@@ -199,6 +204,36 @@ describe('Model', () => {
       .then(data => {
         assert.equal(data, 'GET /res/1/hello');
       });
+    });
+  });
+
+  describe('Placeholders', () => {
+    it('should not request for abstract model', () => {
+      const child = model.model('child/:id');
+      assert.deepEqual(child.parameters, {id: true});
+      try {
+        child.get();
+        throw new Error('Should not execute here.')
+      } catch (err) {
+        assert.ok(err.message.startsWith('Abstract model'));
+      }
+    });
+
+    it('should request after data filled', () => {
+      const abs = model.model('child/:id');
+      const filled = abs.fill({id: '123'});
+      assert.strictEqual(abs.prehandlers, filled.prehandlers);
+      assert.strictEqual(abs.posthandlers, filled.posthandlers);
+      return filled.get()
+      .then(data => {
+        assert.equal(data.responseLine, 'GET /res/1/child/123');
+      });
+    });
+
+    it('should allow partial filling', () => {
+      const abs = model.model('/a/:a/b/:b');
+      const child = abs.fill({a: 1});
+      assert.deepEqual(child.parameters, {b: true});
     });
   });
 });

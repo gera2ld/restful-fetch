@@ -18,7 +18,7 @@ export default class Restful {
       const preset = this['preset' + name.toUpperCase()];
       preset && preset.call(this);
     });
-    this.rootModel = new Model(this, this.root);
+    this.rootModel = new Model(this, '');
     [
       'model',
       'request',
@@ -67,7 +67,7 @@ export default class Restful {
     return qs ? '?' + qs : '';
   }
 
-  processHandlers(handlers, value, cb) {
+  _processHandlers(handlers, value, cb) {
     if (!cb) cb = (value, handler) => handler(value);
     return handlers.reduce(
       (promise, handler) => promise.then(value => cb(value, handler)),
@@ -75,7 +75,7 @@ export default class Restful {
     );
   }
 
-  prepareRequest(options, overrides) {
+  _prepareRequest(options, overrides) {
     const {method, url, params, body, headers} = options;
     const request = {
       url,
@@ -84,14 +84,14 @@ export default class Restful {
       body,
     };
     if (params) request.url += this.toQueryString(params);
-    return this.processHandlers(
+    return this._processHandlers(
       overrides.prehandlers || this.prehandlers, request,
       (request, handler) => Object.assign({}, request, handler(request))
     );
   }
 
   _request(options, overrides) {
-    return this.prepareRequest(options, overrides)
+    return this._prepareRequest(options, overrides)
     .then(request => {
       const init = ['method', 'headers', 'body']
       .reduce((init, key) => {
@@ -101,7 +101,7 @@ export default class Restful {
       }, {});
       return fetch(request.url, init)
     })
-    .then(res => this.processHandlers(overrides.posthandlers || this.posthandlers, res))
-    .catch(res => this.processHandlers(overrides.errhandlers || this.errhandlers, res));
+    .then(res => this._processHandlers(overrides.posthandlers || this.posthandlers, res))
+    .catch(res => this._processHandlers(overrides.errhandlers || this.errhandlers, res));
   }
 }
