@@ -5,6 +5,7 @@ export default function Restful(options) {
   if (!(this instanceof Restful)) return new Restful(options);
   options = options || {};
   this.root = options.root || '';
+  this.config = Object.assign({}, options.config);
   this.headers = Object.assign({}, options.headers);
   this.prehandlers = [];
   this.posthandlers = [res => {
@@ -97,7 +98,7 @@ Object.assign(Restful.prototype, {
       const val = request[key];
       if (val != null) init[key] = val;
       return init;
-    }, {});
+    }, Object.assign({}, this.config));
     const url = request.url + (request.params ? this.toQueryString(request.params) : '');
     return fetch(url, init);
   },

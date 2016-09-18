@@ -59,6 +59,10 @@ Parameters:
 
     Array of presets to be loaded. Currently only `'json'` is supported.
 
+  * config: *(Optional) Object*
+
+    Extra config to be passed to [fetch](https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch).
+
 Methods:
 
 The `Restful` objects is like a root model, so it has all the model methods excluding
