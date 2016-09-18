@@ -197,9 +197,11 @@ describe('Model', () => {
     });
 
     it('should override global interceptors', () => {
-      model.overrides.posthandlers = [
-        res => res.text(),
-      ];
+      model.overrides = {
+        posthandlers: [
+          res => res.text(),
+        ],
+      };
       return model.get('hello')
       .then(data => {
         assert.equal(data, 'GET /res/1/hello');
