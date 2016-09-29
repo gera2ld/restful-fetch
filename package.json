@@ -4,7 +4,8 @@
   "description": "Restful library",
   "main": "dist",
   "scripts": {
-    "build": "rollup -c rollup.config.js",
+    "lint": "eslint src",
+    "build": "rollup -c",
     "test": "mocha test"
   },
   "keywords": [
@@ -19,10 +20,11 @@
   "devDependencies": {
     "babel-plugin-external-helpers": "^6.8.0",
     "babel-preset-es2015": "^6.14.0",
-    "mocha": "^2.4.5",
-    "proxyquire": "^1.7.4",
-    "rollup": "^0.25.8",
-    "rollup-plugin-babel": "^2.4.0"
+    "eslint": "^3.6.1",
+    "mocha": "^3.1.0",
+    "proxyquire": "^1.7.10",
+    "rollup": "^0.36.1",
+    "rollup-plugin-babel": "^2.6.1"
   },
   "directories": {
     "test": "test"
