@@ -88,14 +88,16 @@ describe('Restful', () => {
     });
 
     it('should intercept after request', () => {
-      rest.posthandlers.push(options => {
-        options.data = 'intercepted';
-        return options;
+      rest.posthandlers.push((res, options) => {
+        res.data = 'intercepted';
+        res.method = options.method;
+        return res;
       });
       return rest.get('hello')
       .then(data => {
         assert.equal(data.responseLine, 'GET /hello');
         assert.equal(data.data, 'intercepted');
+        assert.equal(data.method, 'GET');
       });
     });
 

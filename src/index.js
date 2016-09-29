@@ -13,7 +13,7 @@ export default function Restful(options) {
     return res;
   }];
   this.errhandlers = [
-    res => {throw res},
+    res => {throw res;},
   ];
   (options.presets || []).forEach(name => {
     const preset = this['preset' + name.toUpperCase()];
@@ -70,7 +70,10 @@ Object.assign(Restful.prototype, {
   },
 
   _processHandlers(handlers, value, cb) {
-    if (!cb) cb = (value, handler) => handler(value);
+    if (typeof cb !== 'function') {
+      const extra = cb;
+      cb = (value, handler) => handler(value, extra);
+    }
     return handlers.reduce(
       (promise, handler) => promise.then(value => cb(value, handler)),
       Promise.resolve(value)
@@ -102,11 +105,13 @@ Object.assign(Restful.prototype, {
     const url = request.url + (request.params ? this.toQueryString(request.params) : '');
     return fetch(url, init);
   },
-  
+
   _request(options, overrides) {
     return this._prepareRequest(options, overrides)
-    .then(request => this._fetch(request))
-    .then(res => this._processHandlers(overrides && overrides.posthandlers || this.posthandlers, res))
+    .then(request => (
+      this._fetch(request)
+      .then(res => this._processHandlers(overrides && overrides.posthandlers || this.posthandlers, res, request))
+    ))
     .catch(res => this._processHandlers(overrides && overrides.errhandlers || this.errhandlers, res));
   },
 });
