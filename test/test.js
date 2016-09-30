@@ -55,8 +55,18 @@ describe('Restful', () => {
       });
     });
 
+    it('PATCH', () => {
+      return rest.patch('hello', {
+        foo: 'bar',
+      })
+      .then(data => {
+        assert.equal(data.responseLine, 'PATCH /hello');
+        assert.equal(data.data.foo, 'bar');
+      });
+    });
+
     it('DELETE', () => {
-      return rest.remove('hello')
+      return rest.delete('hello')
       .then(data => {
         assert.equal(data.responseLine, 'DELETE /hello');
         assert.equal(data.data, null);
@@ -148,8 +158,18 @@ describe('Model', () => {
       });
     });
 
+    it('PATCH', () => {
+      return model.patch('hello', {
+        foo: 'bar',
+      })
+      .then(data => {
+        assert.equal(data.responseLine, 'PATCH /res/1/hello');
+        assert.equal(data.data.foo, 'bar');
+      });
+    });
+
     it('DELETE', () => {
-      return model.remove('hello')
+      return model.delete('hello')
       .then(data => {
         assert.equal(data.responseLine, 'DELETE /res/1/hello');
         assert.equal(data.data, null);

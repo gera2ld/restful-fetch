@@ -109,9 +109,17 @@ Methods:
 
   `PUT` request.
 
-* remove(url: *String*, params: *(Optional) Object*)
+* patch(url: *String*, data: *Any*, params: *(Optional) Object*)
+
+  `PATCH` request.
+
+* delete(url: *String*, params: *(Optional) Object*)
 
   `DELETE` request.
+
+* remove
+
+  alias to `delete` method.
 
 ``` js
 const Cars = restful.model('cars');
