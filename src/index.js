@@ -26,6 +26,8 @@ export default function Restful(options) {
     'get',
     'post',
     'put',
+    'patch',
+    'delete',
     'remove',
   ].forEach(method => {
     this[method] = this.rootModel[method].bind(this.rootModel);

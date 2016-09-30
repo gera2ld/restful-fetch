@@ -81,7 +81,14 @@ Object.assign(Model.prototype, {
     });
   },
 
-  remove(url, params) {
+  patch(url, body, params) {
+    return this.request({
+      method: 'PATCH',
+      url, params, body,
+    });
+  },
+
+  delete(url, params) {
     return this.request({
       method: 'DELETE',
       url, params,
@@ -104,4 +111,8 @@ Object.assign(Model.prototype, {
     model.posthandlers = this.posthandlers;
     return model;
   },
+});
+
+Object.assign(Model.prototype, {
+  remove: Model.prototype.delete,
 });
