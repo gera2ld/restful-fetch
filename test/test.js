@@ -35,6 +35,31 @@ describe('Restful', () => {
       });
     });
 
+    it('GET with params', () => {
+      return Promise.all([
+        rest.get('http://www.google.com/', {a: 1})
+        .then(data => {
+          assert.equal(data.responseLine, 'GET http://www.google.com/?a=1');
+        }),
+        rest.get('http://www.google.com/', {a: 0})
+        .then(data => {
+          assert.equal(data.responseLine, 'GET http://www.google.com/?a=0');
+        }),
+        rest.get('http://www.google.com/', {a: false})
+        .then(data => {
+          assert.equal(data.responseLine, 'GET http://www.google.com/?a=false');
+        }),
+        rest.get('http://www.google.com/', {a: null})
+        .then(data => {
+          assert.equal(data.responseLine, 'GET http://www.google.com/?a=');
+        }),
+        rest.get('http://www.google.com/', {a: undefined})
+        .then(data => {
+          assert.equal(data.responseLine, 'GET http://www.google.com/?a=');
+        }),
+      ]);
+    });
+
     it('POST', () => {
       return rest.post('hello', {
         foo: 'bar',

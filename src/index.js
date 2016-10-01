@@ -66,7 +66,11 @@ Object.assign(Restful.prototype, {
 
   toQueryString(params) {
     const qs = Object.keys(params)
-    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    .map(key => {
+      let val = params[key];
+      if (val == null) val = '';
+      return `${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
+    })
     .join('&');
     return qs ? '?' + qs : '';
   },
