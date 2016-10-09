@@ -232,14 +232,16 @@ describe('Model', () => {
     });
 
     it('should intercept after request', () => {
-      model.posthandlers.push(options => {
-        options.data = 'intercepted';
-        return options;
+      model.posthandlers.push((data, options) => {
+        data.data = 'intercepted';
+        data.relative = options.relative;
+        return data;
       });
       return model.get('hello')
       .then(data => {
         assert.equal(data.responseLine, 'GET /res/1/hello');
         assert.equal(data.data, 'intercepted');
+        assert.equal(data.relative, '/hello');
       });
     });
 

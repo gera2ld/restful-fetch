@@ -154,6 +154,11 @@ are model specific interceptors.
 
   Both `Restful` and `Model` have `posthandlers`. Those on `Restful`s are called first.
 
+  Each posthandler is called with two parameters: `data` and `options`. `data` is the
+  current data object and can be modified by returning a new one. `options` contains
+  all information of the request, including `method`, `url` (full url), `relative`
+  (url relative to current model).
+
 * `errhandlers`
 
   Only `Restful` object has `errhandlers`.
