@@ -286,5 +286,14 @@ describe('Model', () => {
       const child = abs.fill({a: 1});
       assert.deepEqual(child.parameters, {b: true});
     });
+
+    it('should allow 0 as data', () => {
+      const abs = model.model('child/:id');
+      const filled = abs.fill({id: 0});
+      return filled.get()
+      .then(data => {
+        assert.equal(data.responseLine, 'GET /res/1/child/0');
+      });
+    });
   });
 });

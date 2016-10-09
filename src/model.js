@@ -107,7 +107,7 @@ Object.assign(Model.prototype, {
   fill(data) {
     const path = this.path.replace(RE_PLACEHOLDER, (match, key) => {
       const value = data[key];
-      return value ? '/' + value : match;
+      return value == null ? match : '/' + value;
     });
     const model = new Model(this.restful, path);
     model.prehandlers = this.prehandlers;
