@@ -36,7 +36,7 @@ Object.assign(Model.prototype, {
   _addParam(name) {
     const parameters = this.parameters = this.parameters || {};
     if (parameters[name]) {
-      throw new Error(`Invalid path: parameter "${name}" already exists!`)
+      throw new Error(`Invalid path: parameter "${name}" already exists!`);
     }
     parameters[name] = true;
   },
@@ -55,9 +55,9 @@ Object.assign(Model.prototype, {
         url = this.restful.root + this.path + url;
       }
       options.url = url;
-      return this.restful._request(options, this.overrides);
-    })
-    .then(res => this.restful._processHandlers(this.posthandlers, res));
+      return this.restful._request(options, this.overrides)
+      .then(res => this.restful._processHandlers(this.posthandlers, res, options));
+    });
   },
 
   get(url, params) {
@@ -81,7 +81,14 @@ Object.assign(Model.prototype, {
     });
   },
 
-  remove(url, params) {
+  patch(url, body, params) {
+    return this.request({
+      method: 'PATCH',
+      url, params, body,
+    });
+  },
+
+  delete(url, params) {
     return this.request({
       method: 'DELETE',
       url, params,
@@ -93,7 +100,7 @@ Object.assign(Model.prototype, {
     if (path) path = '/' + path;
     return new Model(this.restful, this.path + path);
   },
-  
+
   fill(data) {
     const path = this.path.replace(RE_PLACEHOLDER, (match, key) => {
       const value = data[key];
@@ -104,4 +111,8 @@ Object.assign(Model.prototype, {
     model.posthandlers = this.posthandlers;
     return model;
   },
+});
+
+Object.assign(Model.prototype, {
+  remove: Model.prototype.delete,
 });

@@ -35,6 +35,31 @@ describe('Restful', () => {
       });
     });
 
+    it('GET with params', () => {
+      return Promise.all([
+        rest.get('http://www.google.com/', {a: 1})
+        .then(data => {
+          assert.equal(data.responseLine, 'GET http://www.google.com/?a=1');
+        }),
+        rest.get('http://www.google.com/', {a: 0})
+        .then(data => {
+          assert.equal(data.responseLine, 'GET http://www.google.com/?a=0');
+        }),
+        rest.get('http://www.google.com/', {a: false})
+        .then(data => {
+          assert.equal(data.responseLine, 'GET http://www.google.com/?a=false');
+        }),
+        rest.get('http://www.google.com/', {a: null})
+        .then(data => {
+          assert.equal(data.responseLine, 'GET http://www.google.com/?a=');
+        }),
+        rest.get('http://www.google.com/', {a: undefined})
+        .then(data => {
+          assert.equal(data.responseLine, 'GET http://www.google.com/?a=');
+        }),
+      ]);
+    });
+
     it('POST', () => {
       return rest.post('hello', {
         foo: 'bar',
@@ -55,8 +80,18 @@ describe('Restful', () => {
       });
     });
 
+    it('PATCH', () => {
+      return rest.patch('hello', {
+        foo: 'bar',
+      })
+      .then(data => {
+        assert.equal(data.responseLine, 'PATCH /hello');
+        assert.equal(data.data.foo, 'bar');
+      });
+    });
+
     it('DELETE', () => {
-      return rest.remove('hello')
+      return rest.delete('hello')
       .then(data => {
         assert.equal(data.responseLine, 'DELETE /hello');
         assert.equal(data.data, null);
@@ -88,14 +123,16 @@ describe('Restful', () => {
     });
 
     it('should intercept after request', () => {
-      rest.posthandlers.push(options => {
-        options.data = 'intercepted';
-        return options;
+      rest.posthandlers.push((res, options) => {
+        res.data = 'intercepted';
+        res.method = options.method;
+        return res;
       });
       return rest.get('hello')
       .then(data => {
         assert.equal(data.responseLine, 'GET /hello');
         assert.equal(data.data, 'intercepted');
+        assert.equal(data.method, 'GET');
       });
     });
 
@@ -146,8 +183,18 @@ describe('Model', () => {
       });
     });
 
+    it('PATCH', () => {
+      return model.patch('hello', {
+        foo: 'bar',
+      })
+      .then(data => {
+        assert.equal(data.responseLine, 'PATCH /res/1/hello');
+        assert.equal(data.data.foo, 'bar');
+      });
+    });
+
     it('DELETE', () => {
-      return model.remove('hello')
+      return model.delete('hello')
       .then(data => {
         assert.equal(data.responseLine, 'DELETE /res/1/hello');
         assert.equal(data.data, null);
