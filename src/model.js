@@ -52,7 +52,10 @@ Object.assign(Model.prototype, {
       var url = options.url || '';
       if (!RE_ABSURL.test(url)) {
         if (url && url[0] !== '/') url = '/' + url;
+        options.relative = url;
         url = this.restful.root + this.path + url;
+      } else {
+        options.relative = null;
       }
       options.url = url;
       return this.restful._request(options, this.overrides)
