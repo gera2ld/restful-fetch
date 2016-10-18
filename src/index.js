@@ -44,10 +44,12 @@ Object.assign(Restful.prototype, {
       body: request.body ? JSON.stringify(request.body) : null,
     }));
     this.posthandlers.push(res => res.status === 204 ? null : res.json());
-    this.errhandlers.unshift(res => res.json().then(data => ({
-      status: res.status,
-      data,
-    })));
+    this.errhandlers.unshift(res => {
+      return typeof res.json === 'function' ? res.json().then(data => ({
+        status: res.status,
+        data,
+      })) : res;
+    });
   },
 
   setHeader(key, val) {
