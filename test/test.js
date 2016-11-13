@@ -2,7 +2,7 @@ const proxyquire = require('proxyquire');
 const assert = require('assert');
 const fetch = require('../mock-lib/isomorphic-fetch');
 
-const Restful = proxyquire('../dist', {'isomorphic-fetch': fetch});
+const Restful = proxyquire('../lib', {'isomorphic-fetch': fetch});
 
 var rest;
 

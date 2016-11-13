@@ -2,7 +2,7 @@
   "name": "restful-fetch",
   "version": "0.1.0",
   "description": "Restful library",
-  "main": "dist",
+  "main": "lib",
   "scripts": {
     "lint": "eslint src",
     "build": "rollup -c",

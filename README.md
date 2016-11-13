@@ -33,7 +33,11 @@ Foo.Bar.fill({id: 1}).get().then(data => console.log(data));      // GET /foo/1/
 
 ## Documents
 
+### Overview
+
 Everything is a model, derives from models and derives models.
+
+![restful-fetch](static/restful-fetch.png)
 
 ### Restful
 
