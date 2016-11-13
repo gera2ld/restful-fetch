@@ -2,7 +2,7 @@ const proxyquire = require('proxyquire');
 const assert = require('assert');
 const fetch = require('../mock-lib/isomorphic-fetch');
 
-const Restful = proxyquire('../dist', {'isomorphic-fetch': fetch});
+const Restful = proxyquire('../lib', {'isomorphic-fetch': fetch});
 
 var rest;
 
@@ -220,14 +220,25 @@ describe('Model', () => {
 
   describe('Interceptors', () => {
     it('should intercept before request', () => {
+      Object.assign(rest.headers, {
+        header1: 'header1',
+        header2: 'header2',
+      });
       model.prehandlers.push(options => ({
         params: {
           intercepted: 1
+        },
+        headers: {
+          header2: 'override header2',
+          header3: 'header3',
         },
       }));
       return model.get('hello')
       .then(data => {
         assert.equal(data.responseLine, 'GET /res/1/hello?intercepted=1');
+        assert.equal(data.headers.header1, 'header1');
+        assert.equal(data.headers.header2, 'override header2');
+        assert.equal(data.headers.header3, 'header3');
       });
     });
 
@@ -285,6 +296,15 @@ describe('Model', () => {
       const abs = model.model('/a/:a/b/:b');
       const child = abs.fill({a: 1});
       assert.deepEqual(child.parameters, {b: true});
+    });
+
+    it('should allow 0 as data', () => {
+      const abs = model.model('child/:id');
+      const filled = abs.fill({id: 0});
+      return filled.get()
+      .then(data => {
+        assert.equal(data.responseLine, 'GET /res/1/child/0');
+      });
     });
   });
 });

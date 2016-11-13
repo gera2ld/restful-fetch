@@ -8,6 +8,7 @@ function response(url, init) {
     json: () => Promise.resolve({
       responseLine,
       data,
+      headers: init.headers,
     }),
   };
 }

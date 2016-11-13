@@ -44,10 +44,12 @@ Object.assign(Restful.prototype, {
       body: request.body ? JSON.stringify(request.body) : null,
     }));
     this.posthandlers.push(res => res.status === 204 ? null : res.json());
-    this.errhandlers.unshift(res => res.json().then(data => ({
-      status: res.status,
-      data,
-    })));
+    this.errhandlers.unshift(res => {
+      return typeof res.json === 'function' ? res.json().then(data => ({
+        status: res.status,
+        data,
+      })) : res;
+    });
   },
 
   setHeader(key, val) {
@@ -97,8 +99,14 @@ Object.assign(Restful.prototype, {
     };
     return this._processHandlers(
       overrides && overrides.prehandlers || this.prehandlers, request,
-      (request, handler) => Object.assign({}, request, handler(request))
+      (request, handler) => this._merge(request, handler(request))
     );
+  },
+
+  _merge(obj1, obj2) {
+    return Object.assign({}, obj1, obj2, {
+      headers: Object.assign({}, obj1.headers, obj2.headers),
+    });
   },
 
   _fetch(request) {
