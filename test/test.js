@@ -220,14 +220,25 @@ describe('Model', () => {
 
   describe('Interceptors', () => {
     it('should intercept before request', () => {
+      Object.assign(rest.headers, {
+        header1: 'header1',
+        header2: 'header2',
+      });
       model.prehandlers.push(options => ({
         params: {
           intercepted: 1
+        },
+        headers: {
+          header2: 'override header2',
+          header3: 'header3',
         },
       }));
       return model.get('hello')
       .then(data => {
         assert.equal(data.responseLine, 'GET /res/1/hello?intercepted=1');
+        assert.equal(data.headers.header1, 'header1');
+        assert.equal(data.headers.header2, 'override header2');
+        assert.equal(data.headers.header3, 'header3');
       });
     });
 

@@ -99,8 +99,14 @@ Object.assign(Restful.prototype, {
     };
     return this._processHandlers(
       overrides && overrides.prehandlers || this.prehandlers, request,
-      (request, handler) => Object.assign({}, request, handler(request))
+      (request, handler) => this._merge(request, handler(request))
     );
+  },
+
+  _merge(obj1, obj2) {
+    return Object.assign({}, obj1, obj2, {
+      headers: Object.assign({}, obj1.headers, obj2.headers),
+    });
   },
 
   _fetch(request) {
