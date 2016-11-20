@@ -105,7 +105,7 @@ Object.assign(Restful.prototype, {
 
   _merge(obj1, obj2) {
     return Object.assign({}, obj1, obj2, {
-      headers: Object.assign({}, obj1.headers, obj2.headers),
+      headers: Object.assign({}, obj1 && obj1.headers, obj2 && obj2.headers),
     });
   },
 
