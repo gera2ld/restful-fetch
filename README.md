@@ -113,6 +113,17 @@ The handlers will be discussed more as **interceptors**.
   Derive a new `Model` instance with placeholders filled with `data`.
   `data` is an object with keys as the placeholder names and values to be filled with.
 
+* request(options: *Object*)
+
+  A low-level request method called by `get`, `post`, `put`, etc. `options` may have
+  following properties:
+
+  * url: *String*, default as `''`
+  * method: *String*, default as `GET`
+  * headers: *Object*, default as `null`
+  * params: *Object*, default as `null`
+  * body: *Any*, default as `null`
+
 * post(url: *String*, data: *Any*, params: *(Optional) Object*)
 
   `POST` request.
