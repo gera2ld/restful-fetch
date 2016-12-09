@@ -95,7 +95,7 @@ The handlers will be discussed more as **interceptors**.
 
 **Methods**
 
-* model(...args: *String*)
+* model(...args: *[]String*)
 
   Derive a submodel.
 
@@ -164,14 +164,14 @@ are model specific interceptors.
 
 * `prehandlers` (present on `Restful` and `Model`)
 
-  Process order: `Model.prehandlers -> Restful.prehandlers`.
+  Process order: `Model::prehandlers -> Restful::prehandlers`.
 
   Each prehandler is called with one parameter: the request options. Returned value
   will be merged into it, so only the changed attributes need to be returned.
 
 * `posthandlers` (present on `Restful` and `Model`)
 
-  Process order: `Restful.posthandlers -> Model.posthandlers`.
+  Process order: `Restful::posthandlers -> Model::posthandlers`.
 
   Each posthandler is called with two parameters: `data, options`. `data` is the
   current data object and can be modified by returning a new one. `options` contains
