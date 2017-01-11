@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/npm/l/restful-fetch.svg)
 ![Downloads](https://img.shields.io/npm/dt/restful-fetch.svg)
 
-A Restful library based on [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch).
+A RESTful library based on [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch).
 
 ## Installation
 
@@ -17,9 +17,7 @@ $ npm i restful-fetch
 ``` js
 import Restful from 'restful-fetch';
 
-const restful = new Restful({
-  presets: ['json'],
-});
+const restful = new Restful();
 
 const Foo = restful.model('foo');
 Foo.get().then(data => console.log(data));    // GET /foo
@@ -62,13 +60,39 @@ The handlers will be discussed more as **interceptors**.
 
     Default request headers.
 
-  * presets: *(Optional) Array*
-
-    Array of presets to be loaded. Currently only `'json'` is supported.
-
   * config: *(Optional) Object*
 
     Extra config to be passed to [fetch](https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch).
+
+  * methods: *(Optional) Object*
+
+    Custom methods to be bound to models. The object are composed of `methodName: methodInfo` pairs.
+    `methodInfo` may have following properties:
+
+    * `method`
+
+      The HTTP method to be used for requests, default as `GET`.
+
+    * `args`
+
+      The argument name list. Names may be `url`, `params`, `body` and `headers`.
+
+  ``` js
+  const restful = new Restful({
+    root: '/api',
+    headers: {
+      'X-From': 'restful-fetch',
+    },
+    methods: {
+      foo: {
+        method: 'GET',
+        args: ['url', 'params']
+      }
+    }
+  });
+
+  // restful.foo(url, params)
+  ```
 
 **Methods**
 
@@ -133,10 +157,6 @@ The handlers will be discussed more as **interceptors**.
 
   `DELETE` request.
 
-* remove
-
-  Alias to `delete` method.
-
 ``` js
 const Cars = restful.model('cars');
 
@@ -197,7 +217,10 @@ restful.prehandlers.push(options => {
     params: Object.assign({}, options.params, {hello: 'world'}),
   };
 });
-restful.posthandlers.push(res => res.json());
+restful.posthandlers.push(res => {
+  console.log('Intercepted:', res);
+  return res;
+});
 
 // Model interceptors will be processed only for the model itself
 // Model prehandlers will execute BEFORE global prehandlers
