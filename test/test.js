@@ -4,12 +4,10 @@ const fetch = require('../mock-lib/isomorphic-fetch');
 
 const Restful = proxyquire('../lib', {'isomorphic-fetch': fetch});
 
-var rest;
+let rest;
 
 beforeEach(() => {
-  rest = new Restful({
-    presets: ['json'],
-  });
+  rest = new Restful();
 });
 
 describe('Restful', () => {
@@ -51,11 +49,11 @@ describe('Restful', () => {
         }),
         rest.get('http://www.google.com/', {a: null})
         .then(data => {
-          assert.equal(data.responseLine, 'GET http://www.google.com/?a=');
+          assert.equal(data.responseLine, 'GET http://www.google.com/');
         }),
         rest.get('http://www.google.com/', {a: undefined})
         .then(data => {
-          assert.equal(data.responseLine, 'GET http://www.google.com/?a=');
+          assert.equal(data.responseLine, 'GET http://www.google.com/');
         }),
       ]);
     });
@@ -220,7 +218,7 @@ describe('Model', () => {
 
   describe('Interceptors', () => {
     it('should intercept before request', () => {
-      Object.assign(rest.headers, {
+      Object.assign(rest.options.headers, {
         header1: 'header1',
         header2: 'header2',
       });
