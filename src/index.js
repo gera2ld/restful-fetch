@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch';
 
 const ARGS_WO_PAYLOAD = ['url', 'params'];
-const ARGS_WITH_PAYLOAD = ['url', 'body', 'params'];
+const ARGS_W_PAYLOAD = ['url', 'body', 'params'];
 
 const methods = {
   get: {
@@ -10,15 +10,15 @@ const methods = {
   },
   post: {
     method: 'POST',
-    args: ARGS_WITH_PAYLOAD,
+    args: ARGS_W_PAYLOAD,
   },
   put: {
     method: 'PUT',
-    args: ARGS_WITH_PAYLOAD,
+    args: ARGS_W_PAYLOAD,
   },
   patch: {
     method: 'PATCH',
-    args: ARGS_WITH_PAYLOAD,
+    args: ARGS_W_PAYLOAD,
   },
   delete: {
     method: 'DELETE',
@@ -220,7 +220,7 @@ Object.assign(Model.prototype, {
   fill(data) {
     const path = this.path.replace(RE_PLACEHOLDER, (match, key) => {
       const value = data[key];
-      return value == null ? match : '/' + value;
+      return value == null ? match : '/' + encodeURIComponent(value);
     });
     const model = new Model(this.restful, path);
     model.prehandlers = this.prehandlers;
