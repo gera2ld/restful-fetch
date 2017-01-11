@@ -1,25 +1,28 @@
 import fetch from 'isomorphic-fetch';
 
+const ARGS_WO_PAYLOAD = ['url', 'params'];
+const ARGS_WITH_PAYLOAD = ['url', 'body', 'params'];
+
 const methods = {
   get: {
     method: 'GET',
-    args: ['url', 'params'],
+    args: ARGS_WO_PAYLOAD,
   },
   post: {
     method: 'POST',
-    args: ['url', 'body', 'params'],
+    args: ARGS_WITH_PAYLOAD,
   },
   put: {
     method: 'PUT',
-    args: ['url', 'body', 'params'],
+    args: ARGS_WITH_PAYLOAD,
   },
   patch: {
     method: 'PATCH',
-    args: ['url', 'body', 'params'],
+    args: ARGS_WITH_PAYLOAD,
   },
   delete: {
     method: 'DELETE',
-    args: ['url', 'params'],
+    args: ARGS_WO_PAYLOAD,
   },
 };
 methods.remove = methods.delete;
