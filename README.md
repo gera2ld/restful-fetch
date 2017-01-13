@@ -209,6 +209,12 @@ are model specific interceptors.
   all information of the request, including `method`, `url` (full url), `relative`
   (url relative to current model).
 
+  There are two default posthandlers on a Restful object so that you may either
+  resolve the response data or reject an object with the response object and its data:
+
+    - `response => ({response, data})`
+    - `({response, data}) => response.ok ? data : reject({response, data})`
+
 * `errhandlers` (present on `Restful`)
 
   Each errhandler is called with the error captured.
