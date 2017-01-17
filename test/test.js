@@ -144,6 +144,14 @@ describe('Restful', () => {
         assert.equal(err.data.responseLine, 'POST /error');
       });
     });
+
+    it('should support 204', () => {
+      return rest.post('empty', {
+        status: 204,
+      }).then(data => {
+        assert.deepEqual(data, {});
+      });
+    });
   });
 });
 

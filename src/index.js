@@ -85,10 +85,11 @@ export default function Restful(options) {
     // parse payload
     res => Promise.resolve()
     .then(() => {
+      if (res.status === 204) return {};
       const contentType = res.headers.get('content-type');
-      if (~contentType.indexOf('application/json')) {
+      if (/application\/json/.test(contentType)) {
         return res.json();
-      } else if (~contentType.indexOf('text/')) {
+      } else if (/text\//.test(contentType)) {
         return res.text();
       } else {
         return res.blob();

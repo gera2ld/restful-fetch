@@ -1,5 +1,5 @@
 function response(url, init) {
-  const responseLine = `${init.method} ${url || '/'}`;
+  const responseLine = init.status === 204 ? '' : `${init.method} ${url || '/'}`;
   const data = init.body && JSON.parse(init.body);
   const status = data && data.status || 200;
   const headers = {
