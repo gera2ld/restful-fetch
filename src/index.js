@@ -98,8 +98,9 @@ export default function Restful(options) {
     .then(data => ({res, data})),
     // return data
     ({res, data}) => {
-      // if (res.status > 300) throw res;
-      if (res.ok) return data;
+      // res.ok is not supported in QQBrowser
+      if (res.status >= 200 && res.status < 300) return data;
+      // if (res.ok) return data;
       throw {status: res.status, data};
     },
   ];
