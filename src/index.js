@@ -60,7 +60,7 @@ function processHandlers(handlers, value, cb) {
 export default function Restful(options) {
   if (!(this instanceof Restful)) return new Restful(options);
   options = this.options = Object.assign({}, options);
-  options.root = options.root || '';
+  options.root = (options.root || '').replace(/\/$/, '');
   options.config = Object.assign({}, options.config);
   options.headers = Object.assign({}, options.headers);
   options.methods = Object.assign({}, methods, options.methods);
