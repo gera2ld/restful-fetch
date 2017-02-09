@@ -105,6 +105,11 @@ const restful = new Restful(options);
 const restful = Restful(options);
 ```
 
+**Notes**
+
+> A Restful instance should be a singleton and used all over the project.
+> The options will be handled and can be reached and modified by `restful.options`.
+
 ### Model
 
 A `Model` instance is an object derived from a `Restful` instance or another model.
