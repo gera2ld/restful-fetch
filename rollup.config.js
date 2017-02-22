@@ -5,6 +5,12 @@ export default {
   dest: 'lib/index.js',
   format: 'cjs',
   plugins: [babel({
-    exclude: 'node_modules/**',
+    presets: [
+      ['es2015', {modules: false}],
+    ],
+    plugins: [
+      'external-helpers',
+    ],
+    ignore: 'node_modules/**',
   })],
 }
