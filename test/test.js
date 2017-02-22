@@ -4,13 +4,42 @@ const fetch = require('../mock-lib/isomorphic-fetch');
 
 const Restful = proxyquire('../lib', {'isomorphic-fetch': fetch});
 
-let rest;
+describe('Utilities', () => {
+  const {toQueryString} = Restful.utils;
 
-beforeEach(() => {
-  rest = new Restful();
+  describe('toQueryString', () => {
+    it('should ignore empty data', () => {
+      assert.equal(toQueryString(), '');
+      assert.equal(toQueryString({}), '');
+    });
+
+    it('should ignore null and undefined', () => {
+      assert.equal(toQueryString({a: null}), '');
+      assert.equal(toQueryString({a: undefined}), '');
+      assert.equal(toQueryString({a: 'b', c: null}), '?a=b');
+    });
+
+    it('should encode normal data', () => {
+      assert.equal(toQueryString({a: 'hello'}), '?a=hello');
+      assert.equal(toQueryString({a: 1, b: 0}), '?a=1&b=0');
+      assert.equal(toQueryString({a: false}), '?a=false');
+    });
+
+    it('should encode complexed objects', () => {
+      assert.equal(
+        decodeURIComponent(toQueryString({a: {b: 'c'}, d: 'e', f: [1, 2, 3]})),
+        '?a[b]=c&d=e&f[]=1&f[]=2&f[]=3');
+    });
+  });
 });
 
 describe('Restful', () => {
+  let rest;
+
+  beforeEach(() => {
+    rest = new Restful();
+  });
+
   describe('Request', () => {
     it('GET', () => {
       return rest.get('hello')
@@ -31,31 +60,6 @@ describe('Restful', () => {
       .then(data => {
         assert.equal(data.responseLine, 'GET http://www.google.com/');
       });
-    });
-
-    it('GET with params', () => {
-      return Promise.all([
-        rest.get('http://www.google.com/', {a: 1})
-        .then(data => {
-          assert.equal(data.responseLine, 'GET http://www.google.com/?a=1');
-        }),
-        rest.get('http://www.google.com/', {a: 0})
-        .then(data => {
-          assert.equal(data.responseLine, 'GET http://www.google.com/?a=0');
-        }),
-        rest.get('http://www.google.com/', {a: false})
-        .then(data => {
-          assert.equal(data.responseLine, 'GET http://www.google.com/?a=false');
-        }),
-        rest.get('http://www.google.com/', {a: null})
-        .then(data => {
-          assert.equal(data.responseLine, 'GET http://www.google.com/');
-        }),
-        rest.get('http://www.google.com/', {a: undefined})
-        .then(data => {
-          assert.equal(data.responseLine, 'GET http://www.google.com/');
-        }),
-      ]);
     });
 
     it('POST', () => {
@@ -156,9 +160,10 @@ describe('Restful', () => {
 });
 
 describe('Model', () => {
-  var model;
+  let rest, model;
 
   beforeEach(() => {
+    rest = new Restful();
     model = rest.model('/res/1');
   });
 
